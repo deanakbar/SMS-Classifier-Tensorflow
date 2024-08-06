@@ -16,5 +16,4 @@ df = pd.read_csv("/content/gdrive/MyDrive/SMS Classifier/spam.csv", encoding='IS
 df = df[['v1', 'v2']]  # Select relevant columns
 ```
 # Check for null data
-```df.info()
-```
+df.info()
