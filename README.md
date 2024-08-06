@@ -10,12 +10,15 @@ This project demonstrates how to build an SMS spam classifier using TensorFlow. 
 from google.colab import drive
 drive.mount("/content/gdrive", force_remount=True)
 ```
-### 2. Load and Preprocess Data
+
+### 2.Load and Preprocess Data 
+
 ```import pandas as pd
+
 df = pd.read_csv("/content/gdrive/MyDrive/SMS Classifier/spam.csv", encoding='ISO-8859-1')
 df = df[['v1', 'v2']]  # Select relevant columns
-```
-``` Check for null data
+
+# Check for null data
 df.info()
 
 # Encode labels
@@ -67,3 +70,4 @@ for sentence in df['v2']:
 
 print(f"The longest sentence is: \"{longest_sentence}\"")
 print(f"Number of words in the longest sentence: {max_word_count}")
+```
