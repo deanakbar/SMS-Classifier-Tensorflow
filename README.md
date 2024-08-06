@@ -97,3 +97,73 @@ name_padded_test = pad_sequences(name_sequences_test, maxlen=max_len_name, paddi
 word_index = name_tokenizer.word_index
 VOCAB_SIZE = len(word_index)
 ```
+
+### 4. Build and Train the Model
+```
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Embedding, Bidirectional, LSTM, Dense
+
+# Define model architecture
+desc_input = Input(shape=(max_len_name,), name='desc_input')
+desc_embedding = Embedding(input_dim=max_words_name, output_dim=64, input_length=max_len_name)(desc_input)
+lstm_output = Bidirectional(LSTM(64))(desc_embedding)
+output = Dense(1, activation='sigmoid')(lstm_output)
+
+model = Model(inputs=desc_input, outputs=output)
+
+# Compile the model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train the model
+model.fit(name_padded_train, y_train, epochs=10, batch_size=32, validation_data=(name_padded_test, y_test))
+```
+
+### 5. Save the Model and Tokenizer
+```
+import pickle
+# Save the tokenizer
+with open('tokenizer.pickle', 'wb') as handle:
+    pickle.dump(name_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# Save the model architecture
+model_json = model.to_json()
+with open('model_architecture.json', 'w') as json_file:
+    json_file.write(model_json)
+# Save the model weights
+model.save_weights('model.weights.h5')
+```
+
+### 6.Load and Use the Model 
+```
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import model_from_json
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+import pickle
+max_len_desc = 200
+# Load model architecture
+with open('/content/gdrive/MyDrive/SMS Classifier/after add test data/model_architecture.json', 'r') as json_file:
+    loaded_model_json = json_file.read()
+
+loaded_model = model_from_json(loaded_model_json)
+
+# Load model weights
+loaded_model.load_weights('/content/gdrive/MyDrive/SMS Classifier/after add test data/model.weights.h5')
+
+# Load tokenizer
+with open('/content/gdrive/MyDrive/SMS Classifier/after add test data/tokenizer.pickle', 'rb') as handle:
+    loaded_tokenizer = pickle.load(handle)
+
+# Predict new text
+new_text = "Your number won 5000 dollar, go to our website now"
+new_text_sequence = loaded_tokenizer.texts_to_sequences([new_text])
+new_text_padded = pad_sequences(new_text_sequence, maxlen=max_len_desc, padding='post')
+class_category = {
+    0: 'Ham',
+    1: 'Spam'
+}
+predictions = loaded_model.predict(new_text_padded)
+predicted_class = np.round(predictions).astype(int)[0][0]
+predicted_class = class_category[predicted_class]
+print(f'For input: "{new_text}" the predicted class is: {predicted_class}')
+```
