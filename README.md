@@ -1,14 +1,20 @@
-# SMS-Classifier-Tensorflow
-This project demonstrates how to build an SMS spam classifier using TensorFlow. The classifier identifies whether an SMS message is spam (unwanted) or not spam (legitimate),
-and demonstrates how to preprocess text data, build a neural network model, and train it to classify SMS messages as spam or ham using TensorFlow.
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SMS Classifier using TensorFlow</title>
+</head>
+<body>
+    <h1>SMS Classifier using TensorFlow</h1>
+    <p>This project demonstrates how to build an SMS spam classifier using TensorFlow. The classifier identifies whether an SMS message is spam (unwanted) or not spam (legitimate), and demonstrates how to preprocess text data, build a neural network model, and train it to classify SMS messages as spam or ham using TensorFlow.</p>
 
-Project Setup
- 1. Mount Google Drive
-    from google.colab import drive
-    drive.mount("/content/gdrive", force_remount=True)
-2.  Load and Preprocess Data
+    <h2>Project Setup</h2>
+    <h3>1. Mount Google Drive</h3>
+    <pre><code>from google.colab import drive
+drive.mount("/content/gdrive", force_remount=True)
+</code></pre>
 
-import pandas as pd
+    <h3>2. Load and Preprocess Data</h3>
+    <pre><code>import pandas as pd
 df = pd.read_csv("/content/gdrive/MyDrive/SMS Classifier/spam.csv", encoding='ISO-8859-1')
 df = df[['v1', 'v2']]  # Select relevant columns
 
@@ -64,9 +70,10 @@ for sentence in df['v2']:
 
 print(f"The longest sentence is: \"{longest_sentence}\"")
 print(f"Number of words in the longest sentence: {max_word_count}")
+</code></pre>
 
-3. Tokenize Text Data
-   from tensorflow.keras.preprocessing.text import Tokenizer
+    <h3>3. Tokenize Text Data</h3>
+    <pre><code>from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 
@@ -89,9 +96,10 @@ name_padded_test = pad_sequences(name_sequences_test, maxlen=max_len_name, paddi
 
 word_index = name_tokenizer.word_index
 VOCAB_SIZE = len(word_index)
+</code></pre>
 
-4. Build and Train the Model
-   from tensorflow.keras.models import Model
+    <h3>4. Build and Train the Model</h3>
+    <pre><code>from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, Bidirectional, LSTM, Dense
 
 # Define model architecture
@@ -107,9 +115,10 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 
 # Train the model
 model.fit(name_padded_train, y_train, epochs=10, batch_size=32, validation_data=(name_padded_test, y_test))
+</code></pre>
 
-5. Save the Model and Tokenizer
-   import pickle
+    <h3>5. Save the Model and Tokenizer</h3>
+    <pre><code>import pickle
 
 # Save the tokenizer
 with open('tokenizer.pickle', 'wb') as handle:
@@ -122,9 +131,10 @@ with open('model_architecture.json', 'w') as json_file:
 
 # Save the model weights
 model.save_weights('model.weights.h5')
+</code></pre>
 
-6. Load and Use the Model
-   import numpy as np
+    <h3>6. Load and Use the Model</h3>
+    <pre><code>import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import model_from_json
 from tensorflow.keras.preprocessing.text import Tokenizer
@@ -160,6 +170,7 @@ predictions = loaded_model.predict(new_text_padded)
 predicted_class = np.round(predictions).astype(int)[0][0]
 predicted_class = class_category[predicted_class]
 print(f'For input: "{new_text}" the predicted class is: {predicted_class}')
+</code></pre>
 
-
-
+</body>
+</html>
