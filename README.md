@@ -71,3 +71,29 @@ for sentence in df['v2']:
 print(f"The longest sentence is: \"{longest_sentence}\"")
 print(f"Number of words in the longest sentence: {max_word_count}")
 ```
+### 3.Tokenize Text Data
+```
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from sklearn.model_selection import train_test_split
+
+# Tokenize text data
+max_words_name = 10000
+max_len_name = 200
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(df['v2'], df['v1'], test_size=0.2, random_state=42)
+
+# Tokenize training data
+name_tokenizer = Tokenizer(num_words=max_words_name, oov_token='<OOV>')
+name_tokenizer.fit_on_texts(X_train)
+name_sequences_train = name_tokenizer.texts_to_sequences(X_train)
+name_padded_train = pad_sequences(name_sequences_train, maxlen=max_len_name, padding='post')
+
+# Tokenize testing data
+name_sequences_test = name_tokenizer.texts_to_sequences(X_test)
+name_padded_test = pad_sequences(name_sequences_test, maxlen=max_len_name, padding='post')
+
+word_index = name_tokenizer.word_index
+VOCAB_SIZE = len(word_index)
+```
